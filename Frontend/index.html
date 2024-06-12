@@ -28,7 +28,7 @@
   <link href="assets/css/main.css" rel="stylesheet">
 </head>
 
-<body class="index-page">
+<body class="index-page" onload="activarTab(document.getElementById('tabck-0'))">
 
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
@@ -102,18 +102,37 @@
               troubleshoot
               </span></button>
           </div>
-          <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
-           <textarea class="form-control" id="inputArea" rows="3"></textarea>
-          </div>
+
+           <table class="tabs col-lg-6 content" data-min="0" data-max="2">
+          <tr>
+              <th class="tabcks">&nbsp;</th>
+              <th class="tabck" id="tabck-0" onclick="activarTab(this)">Primera</th>
+              <th class="tabcks">&nbsp;</th>
+              <th class="tabck" id="tabck-1" onclick="activarTab(this)">Segunda</th>
+              <th class="tabcks">&nbsp;</th>
+              <th class="tabck" id="tabck-2" onclick="activarTab(this)">Tercera</th>
+          </tr>
+          <tr class="filadiv">
+              <td colspan="12" id="tab-0">
+                  <div class="tabdiv col-lg-6 content" id="tabdiv-0" data-aos="fade-up" data-aos-delay="100">
+                    <textarea class="form-control" id="inputArea0" rows="3"></textarea>
+                  </div>
+                  <div class="tabdiv col-lg-6 content" id="tabdiv-1" data-aos="fade-up" data-aos-delay="100">
+                    <textarea class="form-control" id="inputArea1" rows="3"></textarea>
+                  </div>
+                  <div class="tabdiv col-lg-6 content" id="tabdiv-2" data-aos="fade-up" data-aos-delay="100">
+                    <textarea class="form-control" id="inputArea2" rows="3"></textarea>
+                  </div>
+              </td>
+          </tr>
+      </table>
 
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <label></label>
             <textarea class="form-control" id="outputArea" rows="3"></textarea>
-          
           </div>
           
-
         </div>
-
       </div>
 
     </section><!-- / Section 1-->

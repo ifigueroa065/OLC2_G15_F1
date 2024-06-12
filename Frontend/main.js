@@ -1,5 +1,8 @@
+
+let activeTabId = 0;//Pestaña activa
+
 function Analizar() {
-    const code = document.getElementById("inputArea").value;
+    const code = document.getElementById(`inputArea${activeTabId}`).value;
     try {
         let resultado = parser.parse(code);
         document.getElementById("outputArea").innerText = JSON.stringify(resultado, null, 2);
@@ -10,7 +13,7 @@ function Analizar() {
 
 
 function Clear() {
-    document.getElementById("inputArea").value = "";
+    document.getElementById(`inputArea${activeTabId}`).value = "";
     document.getElementById("outputArea").innerText = "";
 }
 
@@ -34,7 +37,7 @@ function loadFile() {
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById('inputArea').textContent = e.target.result;
+                document.getElementById(`inputArea${activeTabId}`).textContent = e.target.result;
             };
             reader.readAsText(file);
         }
@@ -60,3 +63,60 @@ function CargarInfo() {
         
 
 document.getElementById('fileInputButton').addEventListener('click', loadFile);
+
+
+
+/**
+ * Multiple pestaña
+ */
+
+
+function activarTab(unTab) {
+    try {
+        var id = unTab.id;
+        if (id){
+            var tr = unTab.parentNode || unTab.parentElement;
+            var tbody = tr.parentNode || tr.parentElement;
+            var table = tbody.parentNode || tbody.parentElement;
+            // Pestañas en varias filas
+            if (table.getAttribute("data-filas") != null){
+                var filas = tbody.getElementsByTagName("tr");
+                var filaDiv = filas[filas.length - 1];
+                tbody.insertBefore(tr, filaDiv);
+            }
+
+            var desde = table.getAttribute("data-min");
+            if (desde == null) desde = 0;
+            var hasta = table.getAttribute("data-max");
+            if (hasta == null) hasta = 2; 
+
+            var idTab = id.split("tabck-");
+            var numTab = parseInt(idTab[1]);
+            activeTabId = numTab;
+            var esteTabDiv = document.getElementById("tabdiv-" + numTab);
+            for (var i = desde; i <= hasta; i++) {
+                var tabdiv = document.getElementById("tabdiv-" + i);
+                if (tabdiv) {
+                    var tabck = document.getElementById("tabck-" + i);
+                    if (tabdiv.id == esteTabDiv.id) {
+                        tabdiv.style.display = "block";
+                        tabck.style.color = "slategrey";
+                        tabck.style.backgroundColor = "rgb(235, 235, 225)";
+                        tabck.style.borderBottomColor = "rgb(235, 235, 225)";
+                    } else {
+                        tabdiv.style.display = "none";
+                        tabck.style.color = "white";
+                        tabck.style.backgroundColor = "gray";
+                        tabck.style.borderBottomColor = "gray";
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        alert("Error al activar una pestaña. " + e.message);
+    }
+}
+
+window.onload = function() {
+    activarTab(document.getElementById('tabck-0'));
+};

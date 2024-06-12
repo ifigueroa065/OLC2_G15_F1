@@ -1,77 +1,156 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analizador de Código ARM64</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+Program
+  = _ comentario:ComentarioInicial? _ global:GlobalDeclaration start:StartDeclaration secciones:OpcionalesDeclaraciones? instrucciones:InstructionList _ { 
+      return { 
+        type: "Program", 
+        comentario: comentario || null, 
+        global, 
+        start, 
+        secciones: secciones || null, 
+        body: instrucciones 
+      }; 
+    }
 
-        .container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-        }
+ComentarioInicial
+  = LineComment / SemicolonComment
 
-        h1 {
-            color: #343a40;
-            margin-bottom: 20px;
-        }
+GlobalDeclaration
+  = ".global" _ name:Identifier { return { type: "GlobalDeclaration", name }; }
 
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ced4da;
-            margin-bottom: 10px;
-            resize: none;
-        }
+StartDeclaration
+  = "_start" ":" { return { type: "StartDeclaration", name: "_start" }; }
 
-        button {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+OpcionalesDeclaraciones
+  = seccion:Seccion _ secciones:OpcionalesDeclaraciones { return [seccion, ...secciones]; }
+  / seccion:Seccion { return [seccion]; }
+  / { return []; }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+Seccion
+  = DataSection
+  / BssSection
 
-        #resultado {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #28a745;
-            white-space: pre-wrap; /* Preserve newlines */
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Analizador de Código ARM64</h1>
-        <textarea id="code" placeholder="Ingrese el código ARM64"></textarea>
-        <button onclick="analizar()">Analizar</button>
-        <div id="resultado"></div>
-    </div>
+DataSection
+  = ".data" _ elementos:ElementosData { return { type: "DataSection", elementos }; }
 
-    <!-- Incluyendo el archivo parser.js generado por Peggy -->
-    <script src="parser.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+ElementosData
+  = head:ElementoData tail:(_ EOL _ ElementoData)* {
+      return [head, ...tail.map(e => e[3])];
+    }
+
+ElementoData
+  = label:Identifier ":" _ directive:(".ascii" / ".asciz") _ value:Cadena {
+      return { type: "DataElement", label, directive, value };
+    }
+
+BssSection
+  = ".bss" _ elementos:ElementosBss { return { type: "BssSection", elementos }; }
+
+ElementosBss
+  = head:ElementoBss tail:(_ EOL _ ElementoBss)* {
+      return [head, ...tail.map(e => e[3])];
+    }
+
+ElementoBss
+  = label:Identifier ":" _ ".space" _ value:Number {
+      return { type: "BssElement", label, value };
+    }
+
+InstructionList
+  = head:Instruction tail:(_ (EOL / ";") _ Instruction)* {
+      return [head, ...tail.map(e => e[3])];
+    }
+
+Instruction
+  = Directive
+  / LoadInstruction
+  / StoreInstruction
+  / ArithmeticInstruction
+  / LogicalInstruction
+  / ShiftRotateInstruction
+  / BranchInstruction
+  / ConditionalBranchInstruction
+  / UnconditionalBranchInstruction
+  / RelationalOperatorInstruction
+  / Label
+  / LineComment
+  / SemicolonComment
+
+Directive
+  = "." name:Identifier _ value:Identifier { return { type: "Directive", name, value }; }
+
+LoadInstruction
+  = op:("ldr"i / "ldrb"i / "ldp"i) _ dest:Register "," _ "[" src:Register "]" {
+      return { type: "LoadInstruction", op, dest, src };
+    }
+
+StoreInstruction
+  = op:("str"i / "strb"i / "stp"i) _ src:Register "," _ "[" dest:Register "]" {
+      return { type: "StoreInstruction", op, src, dest };
+    }
+
+ArithmeticInstruction
+  = op:("add"i / "sub"i / "mul"i / "udiv"i / "sdiv"i) _ dest:Register "," _ src1:Register "," _ src2:Register {
+      return { type: "ArithmeticInstruction", op, dest, src1, src2 };
+    }
+
+LogicalInstruction
+  = op:("and"i / "orr"i / "eor"i / "mvn"i) _ dest:Register "," _ src1:Register ("," _ src2:Register)? {
+      return { type: "LogicalInstruction", op, dest, src1, src2: src2 || null };
+    }
+
+ShiftRotateInstruction
+  = op:("lsl"i / "lsr"i / "asr"i / "ror"i) _ dest:Register "," _ src:Register "," _ "#" value:Number {
+      return { type: "ShiftRotateInstruction", op, dest, src, value };
+    }
+
+BranchInstruction
+  = op:("b"i / "bl"i / "ret"i) _ target:Identifier {
+      return { type: "BranchInstruction", op, target };
+    }
+
+ConditionalBranchInstruction
+  = "b." condition:ConditionCode _ label:Identifier {
+      return { type: "ConditionalBranchInstruction", condition, label };
+    }
+
+UnconditionalBranchInstruction
+  = "b" _ label:Identifier {
+      return { type: "UnconditionalBranchInstruction", label };
+    }
+
+RelationalOperatorInstruction
+  = "cmp" _ reg1:Register "," _ reg2:Register {
+      return { type: "RelationalOperatorInstruction", reg1, reg2 }; 
+    }
+
+ConditionCode
+  = "eq"i { return "eq"; }
+  / "ne"i { return "ne"; }
+  / "gt"i { return "gt"; }
+  / "lt"i { return "lt"; }
+
+Label
+  = name:Identifier ":" { return { type: "Label", name }; }
+
+LineComment
+  = "//" comment:$([^"\n"]*) { return { type: "LineComment", text: comment }; }
+
+SemicolonComment
+  = ";" comment:$([^"\n"]*) { return { type: "SemicolonComment", text: comment }; }
+
+Register
+  = ("x" / "w") [0-9]+ { return { type: "Register", name: text() }; }
+
+Identifier
+  = [a-zA-Z_][a-zA-Z0-9_]* { return text(); }
+
+Number
+  = [0-9]+ { return parseInt(text(), 10); }
+
+Cadena
+  = "\"" chars:[^\"]* "\"" { return chars.join(""); }
+
+EOL "end of line"
+  = "\n" / "\r\n"
+
+_ "whitespace"
+  = [ \t\n\r]*
