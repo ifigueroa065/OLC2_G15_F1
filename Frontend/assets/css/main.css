@@ -51,13 +51,35 @@ button {
   font-size: larger !important;
   align-items: center;
 }
+
 textarea {
   resize: vertical;
-  color: #b8b8b8 !important;
+  color: #b8b8b8 ;
   background-color: var(--heading-color) !important;
   width: 100%;
-  height: 450px;
+  height: auto;
+  border: 1px solid #2d303a !important;
 } 
+
+.output{
+  font-size:large;
+  font-weight: 600;
+  padding-bottom: 5px;
+}
+
+#outputArea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #2d303a;
+  padding: 10px;
+  box-sizing: border-box;
+  white-space: pre-wrap; /* Preserve whitespace */
+  overflow-y: auto; /* Add vertical scroll if necessary */
+  background-color: #2d303a;  /* Background color to match theme */
+  color: inherit;
+  font-size: 22px;
+  font-weight: 600;
+}
 
 body {
   color: var(--default-color);
@@ -1029,9 +1051,10 @@ section,
   transition: ease-in-out 0.3s;
 }
 
-th{
+th, td {
   text-align: center;
 }
+
 
 .team .team-member:hover {
   transform: translateY(-10px);
@@ -1142,6 +1165,47 @@ th{
   }
 }
 
+.editor-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+.line-numbers {
+  width: 40px;
+  padding: 10px 0;
+  background-color: #2d303a;
+  border-right: 1px solid #2d303a;
+  text-align: right;
+  user-select: none;
+}
+
+.line-numbers div {
+  padding: 0 10px;
+  color: #888;
+}
+
+textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  background-color: #2d303a !important;
+  color: #fff !important;
+  overflow: auto;
+}
+
+.keyword {
+  color: #007bff;
+  font-weight: bold;
+}
 
 
 
@@ -1159,27 +1223,42 @@ th{
   border-radius: 8px;
   padding: 10px 20px;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px; /* espacio entre icono y texto */
 }
 .btn-group-custom {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
+.btn-group-custom button {
+  background-color: #0a5172;
+  border-color: #0a5172;
+}
+
+.btn-group-custom button:hover {
+    background-color: #0c5e83;
+    border-color: #0c5e83;
+  
+}
+
 .btn-clear {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: #0a5172;
+  border-color: #0a5172;
 }
 .btn-clear:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
+  background-color: #0c5e83;
+  border-color: #0c5e83;
 }
 .btn-analyze {
-  background-color: #228d3b;
-  border-color: #28a745;
+  background-color: #228d3b !important;
+  border-color: #28a745 !important;
 }
 .btn-analyze:hover {
-  background-color: #1e7e34;
-  border-color: #1e7e34;
+  background-color: #1e7e34 !important;
+  border-color: #1e7e34 !important;
 }
 
 
@@ -1193,42 +1272,44 @@ table.tabs {
   background-color: transparent;
   }
 th.tabck {
-  border: gray solid 1px;
+  border: #2d303a solid 1px;
   border-bottom: 0;
   border-radius: 0.5em 0.5em 0 0;
-  background-color: transparent;
+  background-color: #2d303a !important;
   padding: 0em;
   text-align: center;
   cursor: pointer;
+  color: #fff !important;
   }
+ 
 th.tabcks {
   border: 0;
-  border-bottom: gray solid 1px;
+  border-bottom: #2d303a solid 1px !important;
   }
 th.tabcks:first-child {
-  border-left: gray solid 1px;
+  border-left: #2d303a solid 1px !important;
   }
 th.tabcks:last-child {
-  border-right: gray solid 1px;
+  border-right: #2d303a solid 1px !important;
   }
 table.tabs tr:first-child th.tabcks {
   border-left: none;
   border-right: none;
   }
 table.tabs[data-filas] th.tabck {
-  box-shadow: 0 -0.15em 0.1em 0 white;
+  box-shadow: 0 -0.15em 0.1em 0 #2d303a !important;
   }
 table.tabs td {
-  border: gray solid 1px;
+  border: #2d303a solid 1px !important;
   border-top: 0;
   }
 tr.filadiv {
-  background-color: rgb(235, 235, 225);
+  background-color: #2d303a !important;
   }
 /* El ancho y alto de los div.tabdiv se configuran
 en cada aplicación */
 div.tabdiv {
-  background-color: rgb(235, 235, 225);
+  background-color: #2d303a !important;
   border: 0;
   padding: 0 em;
   overflow: auto;

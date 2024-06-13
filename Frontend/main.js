@@ -8,9 +8,6 @@ function activarTab(unTab) {
         if (id) {
             var numTab = parseInt(id.split("tabck-")[1]);
             activeTabId = numTab; // Actualiza la pestaña activa
-            //alert("Pestaña activa " + activeTabId );
-            // Las "tabdiv" son los bloques interiores mientras que los "tabck"
-            // son las pestañas.
             var esteTabDiv = document.getElementById("tabdiv-" + numTab);
             for (var i = 1; i < nextTabId; i++) {
                 var tabdiv = document.getElementById("tabdiv-" + i);
@@ -54,7 +51,10 @@ function addTab() {
     newTabRow.innerHTML = `
         <td colspan="12">
             <div class="tabdiv col-lg-12 content" id="tabdiv-${nextTabId}" data-aos="fade-up" data-aos-delay="100">
-              <textarea class="form-control tab-content" id="inputArea${nextTabId}" rows="10"></textarea>
+                <div class="editor-container">
+                    <div class="line-numbers" id="lineNumbers${nextTabId}"></div>
+                    <textarea class="form-control tab-content" id="inputArea${nextTabId}" rows="10"></textarea>
+                </div>
             </div>
         </td>
     `;
@@ -63,6 +63,7 @@ function addTab() {
     tabCount++;
     nextTabId++;
     activarTab(newTab);
+    initializeEditor(`inputArea${nextTabId - 1}`);
 }
 
 function closeTab(index) {
@@ -73,20 +74,6 @@ function closeTab(index) {
         tabToClose.remove();
         tabContentToClose.remove();
     }
-
-    // Reorganizar números de pestañas y contenidos
-    /*const tabs = document.querySelectorAll('.tabck');
-    const tabContents = document.querySelectorAll('.filadiv');
-
-    let currentTabNum = 1;
-
-    tabs.forEach((tab) => {
-        const id = parseInt(tab.id.split("tabck-")[1]);
-        tab.innerHTML = `Code ${currentTabNum} <span onclick="event.stopPropagation(); closeTab(${id})" style="cursor: pointer;">&times;</span>`;
-        currentTabNum++;
-    });
-
-    tabCount = tabs.length; // Actualizar el contador de pestañas*/
 
     // Activar una pestaña menor a la que se cerró o la primera pestaña si no existe una menor
     if (index <= activeTabId && tabCount > 1) {
@@ -100,65 +87,112 @@ function closeTab(index) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar la primera pestaña
-    activarTab(document.getElementById('tabck-1'));
+function initializeEditor(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    const editorContainer = textarea.closest('.editor-container');
+    const lineNumbers = editorContainer.querySelector('.line-numbers');
+
+    function updateLineNumbers() {
+        const lines = textarea.value.split('\n').length;
+        let lineNumbersHTML = '';
+        for (let i = 1; i <= lines; i++) {
+            lineNumbersHTML += `<div>${i}</div>`;
+        }
+        lineNumbers.innerHTML = lineNumbersHTML;
+    }
+
+    function applySyntaxHighlighting() {
+        const code = textarea.value;
+        const highlightedCode = code.replace(/(const|let|var|function|return|if|else|for|while)/g, '<span class="keyword">$1</span>');
+        const highlightContainer = document.createElement('div');
+        highlightContainer.innerHTML = `<pre>${highlightedCode}</pre>`;
+        highlightContainer.style.position = 'absolute';
+        highlightContainer.style.top = '0';
+        highlightContainer.style.left = '0';
+        highlightContainer.style.pointerEvents = 'none';
+        highlightContainer.style.width = '100%';
+        highlightContainer.style.height = '100%';
+        highlightContainer.style.whiteSpace = 'pre-wrap';
+        highlightContainer.style.zIndex = '-1';
+        editorContainer.insertBefore(highlightContainer, textarea);
+    }
+
+    textarea.addEventListener('input', function() {
+        updateLineNumbers();
+        applySyntaxHighlighting();
+    });
+
+    updateLineNumbers();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEditor('inputArea1');
+    document.getElementById('fileInputButton').addEventListener('click', loadFile);
 });
 
-
-
 function Analizar() {
-    const input = document.getElementById('inputArea1').value;
+    const input = document.getElementById(`inputArea${activeTabId}`).value;
     const errorTableBody = document.getElementById('TBODY');
-  
+
     // Remove previous error rows
     while (errorTableBody.firstChild) {
-      errorTableBody.removeChild(errorTableBody.firstChild);
+        errorTableBody.removeChild(errorTableBody.firstChild);
     }
-  
-    try {
-      const result = parser.parse(input);
-      document.getElementById('outputArea').textContent = "Valid Code";
-    } catch (error) {
-      document.getElementById('outputArea').textContent = "Invalid Code";
-      console.error(error);
-      let errorType = "sintáctico";
-      if (error.name === "SyntaxError") {
-        errorType = "sintáctico";
-      } else if (error.name === "LexicalError") { // assuming you have a LexicalError type defined
-        errorType = "léxico";
-      }
-  
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>1</td>
-        <td>${error.message}</td>
-        <td>${error.location ? error.location.start.line : '-'}</td>
-        <td>${error.location ? error.location.start.column : '-'}</td>
-        <td>${errorType}</td>
-      `;
-      errorTableBody.appendChild(row);
-      document.getElementById('output').textContent = `Error: ${error.message}\n` +
-        `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
-        `Type: ${errorType}`;
-    }
-  }
-  
 
+    try {
+        const result = parser.parse(input);
+        const outputArea = document.getElementById('outputArea');
+        outputArea.textContent = "Valid Code";
+        outputArea.style.color = "#3cb500";  // Set text color to green for valid code
+    } catch (error) {
+        const outputArea = document.getElementById('outputArea');
+        outputArea.textContent = "Invalid Code";
+        outputArea.style.color = "red";  // Set text color to red for invalid code
+        console.error(error);
+        let errorType = "sintáctico";
+        if (error.name === "SyntaxError") {
+            errorType = "sintáctico";
+        } else if (error.name === "LexicalError") { // assuming you have a LexicalError type defined
+            errorType = "léxico";
+        }
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>1</td>
+            <td>${error.message}</td>
+            <td>${error.location ? error.location.start.line : '-'}</td>
+            <td>${error.location ? error.location.start.column : '-'}</td>
+            <td>${errorType}</td>
+        `;
+        errorTableBody.appendChild(row);
+        document.getElementById('output').textContent = `Error: ${error.message}\n` +
+            `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
+            `Type: ${errorType}`;
+    }
+}
 
 function Clear() {
-    document.getElementById(`inputArea${activeTabId}`).value = "";
+    const inputArea = document.getElementById(`inputArea${activeTabId}`);
+    inputArea.value = "";
+    inputArea.rows = 3;  // Tamaño inicial de las filas
+   
     document.getElementById("outputArea").innerText = "";
 }
 
 function download() {
-    const code = document.getElementById("outputArea").innerText;
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "output.json";
-    a.click();
+    const inputArea = document.getElementById(`inputArea${activeTabId}`);
+    if (inputArea) {
+        const code = inputArea.value;
+        const blob = new Blob([code], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Archivo.s";
+        a.click();
+        URL.revokeObjectURL(url); // Limpieza del objeto URL
+    } else {
+        console.error("No se pudo encontrar el elemento con id 'inputArea'");
+    }
 }
 
 function loadFile() {
@@ -166,33 +200,41 @@ function loadFile() {
     fileInput.type = 'file';
     fileInput.accept = '.txt,.s'; // Limita a archivos .txt y .s
     fileInput.style.display = 'none';
+
     fileInput.onchange = function(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                document.getElementById(`inputArea${activeTabId}`).textContent = e.target.result;
+                const textarea = document.getElementById(`inputArea${activeTabId}`);
+                textarea.value = e.target.result;
+                // Actualizar la numeración de líneas y el resaltado de sintaxis
+                initializeEditor(`inputArea${activeTabId}`);
             };
             reader.readAsText(file);
         }
     };
+
     document.body.appendChild(fileInput);
     fileInput.click();
     document.body.removeChild(fileInput);
 }
 
 function CargarInfo() {
-    var id=sessionStorage.ID
-    var tablita = document.querySelector('#TBODY')
-    tablita.innerHTML= ` `
-    tablita.innerHTML +=
-                    `
-                <tr>
-                    <th><center>${res[i].usuario}</center></th>
-                    <th><center>${res[i].comentario}</center></th>
-                </tr>
-                    `
-            
+    const id = sessionStorage.ID;
+    const tablita = document.querySelector('#TBODY');
+    tablita.innerHTML = '';
+    // Supongamos que tienes un array de resultados en sessionStorage
+    const res = JSON.parse(sessionStorage.getItem('results')) || [];
+
+    res.forEach((item, index) => {
+        tablita.innerHTML += `
+            <tr>
+                <td><center>${item.usuario}</center></td>
+                <td><center>${item.comentario}</center></td>
+            </tr>
+        `;
+    });
 }
         
 

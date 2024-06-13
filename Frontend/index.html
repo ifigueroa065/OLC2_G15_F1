@@ -40,13 +40,13 @@
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="#compilador" >Compilador</a></li>
-          <li><a href="#team">Equipo</a></li>
+          <li><a href="#compilador" >Simulator</a></li>
+          <li><a href="#team">Team</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="#reportes">Reportes</a>
+      <a class="btn-getstarted" href="#reportes">Reports</a>
 
     </div>
   </header>
@@ -113,16 +113,19 @@
             <tr class="filadiv" id="tabs-content">
               <td colspan="12" id="tab-1">
                 <div class="tabdiv col-lg-6 content" id="tabdiv-1" data-aos="fade-up" data-aos-delay="100">
-                  <textarea class="form-control tab-content" id="inputArea1" rows="3"></textarea>
-                </div>
+                  <div class="editor-container">
+                      <div class="line-numbers" id="lineNumbers"></div>
+                      <textarea class="form-control tab-content" id="inputArea1" rows="3"></textarea>
+                  </div>
+              </div>
               </td>
             </tr>
           </table>
 
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-            <label></label>
-            <textarea class="form-control" id="outputArea" rows="3"></textarea>
-          </div>
+            <label class="output">OUTPUT</label>
+            <div class="form-control" id="outputArea"></div>
+        </div>
           
         </div>
       </div>
@@ -134,7 +137,7 @@
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>REPORTES</h2>
+        <h2>REPORTS</h2>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -145,10 +148,10 @@
             <thead>
               <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Linea</th>
-                <th scope="col">Columna</th>
-                <th scope="col">Tipo</th>
+                <th scope="col">Description</th>
+                <th scope="col">Line</th>
+                <th scope="col">Column</th>
+                <th scope="col">Type</th>
               </tr>
             </thead>
             <tbody id="TBODY">
@@ -167,7 +170,7 @@
 
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <h2>EQUIPO</h2>
+        <h2>TEAM</h2>
       </div><!-- End Section Title -->
 
       <div class="container">
@@ -183,7 +186,6 @@
                 <p>Ingeniería en Ciencias y Sistemas</p>
                 <div class="social">
                   <a href=""><i class="bi bi-github"></i></a>
-                  <a href=""> <i class="bi bi-linkedin"></i> </a>
                 </div>
               </div>
             </div>
@@ -197,7 +199,6 @@
                 <p>Ingeniería en Ciencias y Sistemas</p>
                 <div class="social">
                   <a href=""><i class="bi bi-github"></i></a>
-                  <a href=""> <i class="bi bi-linkedin"></i> </a>
                 </div>
               </div>
             </div>
@@ -212,7 +213,6 @@
                 <p>Ingeniería en Ciencias y Sistemas</p>
                 <div class="social">
                   <a href=""><i class="bi bi-github"></i></a>
-                  <a href=""> <i class="bi bi-linkedin"></i> </a>
                 </div>
               </div>
             </div>
