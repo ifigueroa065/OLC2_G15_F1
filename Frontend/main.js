@@ -108,14 +108,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function Analizar() {
-    const code = document.getElementById(`inputArea${activeTabId}`).value;
-    try {
-        let resultado = parser.parse(code);
-        document.getElementById("outputArea").innerText = JSON.stringify(resultado, null, 2);
-    } catch (error) {
-        document.getElementById("outputArea").innerText = "Error: " + error.message;
+    const input = document.getElementById('inputArea1').value;
+    const errorTableBody = document.getElementById('TBODY');
+  
+    // Remove previous error rows
+    while (errorTableBody.firstChild) {
+      errorTableBody.removeChild(errorTableBody.firstChild);
     }
-}
+  
+    try {
+      const result = parser.parse(input);
+      document.getElementById('outputArea').textContent = "Valid Code";
+    } catch (error) {
+      document.getElementById('outputArea').textContent = "Invalid Code";
+      console.error(error);
+      let errorType = "sintáctico";
+      if (error.name === "SyntaxError") {
+        errorType = "sintáctico";
+      } else if (error.name === "LexicalError") { // assuming you have a LexicalError type defined
+        errorType = "léxico";
+      }
+  
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>1</td>
+        <td>${error.message}</td>
+        <td>${error.location ? error.location.start.line : '-'}</td>
+        <td>${error.location ? error.location.start.column : '-'}</td>
+        <td>${errorType}</td>
+      `;
+      errorTableBody.appendChild(row);
+      document.getElementById('output').textContent = `Error: ${error.message}\n` +
+        `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
+        `Type: ${errorType}`;
+    }
+  }
+  
 
 
 function Clear() {
