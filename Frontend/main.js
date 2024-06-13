@@ -1,5 +1,111 @@
+let activeTabId = 1; // Variable para almacenar la pestaña activa
+let tabCount = 1; // Contador de pestañas
+let nextTabId = 2; // Siguiente ID único para pestañas
 
-let activeTabId = 0;//Pestaña activa
+function activarTab(unTab) {
+    try {
+        var id = unTab.id;
+        if (id) {
+            var numTab = parseInt(id.split("tabck-")[1]);
+            activeTabId = numTab; // Actualiza la pestaña activa
+            //alert("Pestaña activa " + activeTabId );
+            // Las "tabdiv" son los bloques interiores mientras que los "tabck"
+            // son las pestañas.
+            var esteTabDiv = document.getElementById("tabdiv-" + numTab);
+            for (var i = 1; i < nextTabId; i++) {
+                var tabdiv = document.getElementById("tabdiv-" + i);
+                if (tabdiv) {
+                    var tabck = document.getElementById("tabck-" + i);
+                    if (tabdiv.id == esteTabDiv.id) {
+                        tabdiv.style.display = "block";
+                        tabck.style.color = "slategrey";
+                        tabck.style.backgroundColor = "rgb(235, 235, 225)";
+                        tabck.style.borderBottomColor = "rgb(235, 235, 225)";
+                    } else {
+                        tabdiv.style.display = "none";
+                        tabck.style.color = "white";
+                        tabck.style.backgroundColor = "gray";
+                        tabck.style.borderBottomColor = "gray";
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        alert("Error al activar una pestaña. " + e.message);
+    }
+}
+
+function addTab() {
+    const tabsHeader = document.getElementById('tabs-header');
+    const tabsContent = document.getElementById('tabs-content');
+
+    // Crear nueva pestaña
+    const newTab = document.createElement('th');
+    newTab.classList.add('tabck');
+    newTab.id = `tabck-${nextTabId}`;
+    newTab.onclick = function() { activarTab(this); };
+    newTab.innerHTML = `Code ${tabCount + 1} <span onclick="event.stopPropagation(); closeTab(${nextTabId})" style="cursor: pointer;">&times;</span>`;
+    tabsHeader.insertBefore(newTab, tabsHeader.lastElementChild);
+
+    // Crear nuevo contenido de pestaña
+    const newTabRow = document.createElement('tr');
+    newTabRow.classList.add('filadiv');
+    newTabRow.id = `tabrow-${nextTabId}`;
+    newTabRow.innerHTML = `
+        <td colspan="12">
+            <div class="tabdiv col-lg-12 content" id="tabdiv-${nextTabId}" data-aos="fade-up" data-aos-delay="100">
+              <textarea class="form-control tab-content" id="inputArea${nextTabId}" rows="10"></textarea>
+            </div>
+        </td>
+    `;
+    tabsContent.parentNode.insertBefore(newTabRow, tabsContent.nextSibling);
+
+    tabCount++;
+    nextTabId++;
+    activarTab(newTab);
+}
+
+function closeTab(index) {
+    const tabToClose = document.getElementById(`tabck-${index}`);
+    const tabContentToClose = document.getElementById(`tabrow-${index}`);
+    
+    if (tabToClose && tabContentToClose) {
+        tabToClose.remove();
+        tabContentToClose.remove();
+    }
+
+    // Reorganizar números de pestañas y contenidos
+    /*const tabs = document.querySelectorAll('.tabck');
+    const tabContents = document.querySelectorAll('.filadiv');
+
+    let currentTabNum = 1;
+
+    tabs.forEach((tab) => {
+        const id = parseInt(tab.id.split("tabck-")[1]);
+        tab.innerHTML = `Code ${currentTabNum} <span onclick="event.stopPropagation(); closeTab(${id})" style="cursor: pointer;">&times;</span>`;
+        currentTabNum++;
+    });
+
+    tabCount = tabs.length; // Actualizar el contador de pestañas*/
+
+    // Activar una pestaña menor a la que se cerró o la primera pestaña si no existe una menor
+    if (index <= activeTabId && tabCount > 1) {
+        let newActiveTab = Math.max(1, index - 1);
+        if (!document.getElementById(`tabck-${newActiveTab}`)) {
+            newActiveTab = 1;
+        }
+        activarTab(document.getElementById(`tabck-${newActiveTab}`));
+    } else if (tabCount > 1) {
+        activarTab(document.getElementById(`tabck-1`));
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar la primera pestaña
+    activarTab(document.getElementById('tabck-1'));
+});
+
+
 
 function Analizar() {
     const code = document.getElementById(`inputArea${activeTabId}`).value;
@@ -65,58 +171,3 @@ function CargarInfo() {
 document.getElementById('fileInputButton').addEventListener('click', loadFile);
 
 
-
-/**
- * Multiple pestaña
- */
-
-
-function activarTab(unTab) {
-    try {
-        var id = unTab.id;
-        if (id){
-            var tr = unTab.parentNode || unTab.parentElement;
-            var tbody = tr.parentNode || tr.parentElement;
-            var table = tbody.parentNode || tbody.parentElement;
-            // Pestañas en varias filas
-            if (table.getAttribute("data-filas") != null){
-                var filas = tbody.getElementsByTagName("tr");
-                var filaDiv = filas[filas.length - 1];
-                tbody.insertBefore(tr, filaDiv);
-            }
-
-            var desde = table.getAttribute("data-min");
-            if (desde == null) desde = 0;
-            var hasta = table.getAttribute("data-max");
-            if (hasta == null) hasta = 2; 
-
-            var idTab = id.split("tabck-");
-            var numTab = parseInt(idTab[1]);
-            activeTabId = numTab;
-            var esteTabDiv = document.getElementById("tabdiv-" + numTab);
-            for (var i = desde; i <= hasta; i++) {
-                var tabdiv = document.getElementById("tabdiv-" + i);
-                if (tabdiv) {
-                    var tabck = document.getElementById("tabck-" + i);
-                    if (tabdiv.id == esteTabDiv.id) {
-                        tabdiv.style.display = "block";
-                        tabck.style.color = "slategrey";
-                        tabck.style.backgroundColor = "rgb(235, 235, 225)";
-                        tabck.style.borderBottomColor = "rgb(235, 235, 225)";
-                    } else {
-                        tabdiv.style.display = "none";
-                        tabck.style.color = "white";
-                        tabck.style.backgroundColor = "gray";
-                        tabck.style.borderBottomColor = "gray";
-                    }
-                }
-            }
-        }
-    } catch (e) {
-        alert("Error al activar una pestaña. " + e.message);
-    }
-}
-
-window.onload = function() {
-    activarTab(document.getElementById('tabck-0'));
-};
