@@ -2,6 +2,9 @@ let activeTabId = 1; // Variable para almacenar la pestaña activa
 let tabCount = 1; // Contador de pestañas
 let nextTabId = 2; // Siguiente ID único para pestañas
 
+// Agregado para FASE 2
+let quadTable, symbolTable, consoleResult;
+
 function activarTab(unTab) {
     try {
         var id = unTab.id;
@@ -40,7 +43,7 @@ function addTab() {
     const newTab = document.createElement('th');
     newTab.classList.add('tabck');
     newTab.id = `tabck-${nextTabId}`;
-    newTab.onclick = function() { activarTab(this); };
+    newTab.onclick = function () { activarTab(this); };
     newTab.innerHTML = `Code ${tabCount + 1} <span onclick="event.stopPropagation(); closeTab(${nextTabId})" style="cursor: pointer;">&times;</span>`;
     tabsHeader.insertBefore(newTab, tabsHeader.lastElementChild);
 
@@ -69,7 +72,7 @@ function addTab() {
 function closeTab(index) {
     const tabToClose = document.getElementById(`tabck-${index}`);
     const tabContentToClose = document.getElementById(`tabrow-${index}`);
-    
+
     if (tabToClose && tabContentToClose) {
         tabToClose.remove();
         tabContentToClose.remove();
@@ -117,7 +120,7 @@ function initializeEditor(textareaId) {
         editorContainer.insertBefore(highlightContainer, textarea);
     }
 
-    textarea.addEventListener('input', function() {
+    textarea.addEventListener('input', function () {
         updateLineNumbers();
         applySyntaxHighlighting();
     });
@@ -125,7 +128,7 @@ function initializeEditor(textareaId) {
     updateLineNumbers();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeEditor('inputArea1');
     document.getElementById('fileInputButton').addEventListener('click', loadFile);
 });
@@ -140,7 +143,11 @@ function Analizar() {
     }
 
     try {
+        console.log("hola");
         const result = parser.parse(input);
+        console.log(result);
+        let dot = result.getDot(result);
+        console.log(dot);
         const outputArea = document.getElementById('outputArea');
         outputArea.textContent = "Valid Code";
         outputArea.style.color = "#3cb500";  // Set text color to green for valid code
@@ -175,7 +182,7 @@ function Clear() {
     const inputArea = document.getElementById(`inputArea${activeTabId}`);
     inputArea.value = "";
     inputArea.rows = 3;  // Tamaño inicial de las filas
-   
+
     document.getElementById("outputArea").innerText = "";
 }
 
@@ -201,11 +208,11 @@ function loadFile() {
     fileInput.accept = '.txt,.s'; // Limita a archivos .txt y .s
     fileInput.style.display = 'none';
 
-    fileInput.onchange = function(event) {
+    fileInput.onchange = function (event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const textarea = document.getElementById(`inputArea${activeTabId}`);
                 textarea.value = e.target.result;
                 // Actualizar la numeración de líneas y el resaltado de sintaxis
@@ -236,8 +243,131 @@ function CargarInfo() {
         `;
     });
 }
-        
 
 document.getElementById('fileInputButton').addEventListener('click', loadFile);
 
+$(document).ready(function () {
 
+});
+
+function analysis() {
+    const input = document.getElementById(`inputArea${activeTabId}`).value;
+    const errorTableBody = document.getElementById('TBODY');
+
+    // Remove previous error rows
+    while (errorTableBody.firstChild) {
+        errorTableBody.removeChild(errorTableBody.firstChild);
+    }
+
+    // quadTable = newDataTable('quadTable',
+    //     [{data: "Op"}, {data: "Arg1"}, {data: "Arg2"}, {data: "Arg3"}, {data: "Arg4"}, {data: "Arg5"}, {data: "Result"}],
+    //     []);
+    // const text = document.getElementById(`inputArea${activeTabId}`).value;
+    // const errorTableBody = document.getElementById('TBODY');
+
+    // clearRemoveTableError(errorTableBody);
+    // clearQuadTable();
+
+    try {
+        // Creando entorno global
+        let env = new Environment(null, 'Global');
+        // Creando generador
+        let gen = new Generator();
+        // Obteniendo árbol
+        let result = parser.parse(input);
+        // Ejecutando instrucciones
+        RootExecuter(result, env, gen);
+
+        // Generando gráfica
+        let astDot = result.getDot(result);
+
+        console.log("Cuadruplos: ");
+        console.log(gen.getQuadruples());
+
+        // Generando cuádruplos
+        //addDataToQuadTable(gen.getQuadruples());
+
+        // Agregando salida válida en consola
+        //consoleResult.setValue("VALIDO");
+        const outputArea = document.getElementById('outputArea');
+        outputArea.textContent = "Valid Code";
+        outputArea.style.color = "#3cb500";  // Set text color to green for valid code
+    } catch (error) {
+        const outputArea = document.getElementById('outputArea');
+        outputArea.textContent = "Invalid Code";
+        outputArea.style.color = "red";  // Set text color to red for invalid code
+        console.error(error);
+        let errorType = "sintáctico";
+        if (error.name === "SyntaxError") {
+            errorType = "sintáctico";
+        } else if (error.name === "LexicalError") { // assuming you have a LexicalError type defined
+            errorType = "léxico";
+        }
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>1</td>
+            <td>${error.message}</td>
+            <td>${error.location ? error.location.start.line : '-'}</td>
+            <td>${error.location ? error.location.start.column : '-'}</td>
+            <td>${errorType}</td>
+        `;
+        errorTableBody.appendChild(row);
+        document.getElementById('output').textContent = `Error: ${error.message}\n` +
+            `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
+            `Type: ${errorType}`;
+    }
+}
+
+function clearQuadTable() {
+    quadTable.clear().draw();
+}
+
+function clearRemoveTableError(errorTableBody) {
+    while (errorTableBody.firstChild) {
+        errorTableBody.removeChild(errorTableBody.firstChild);
+    }
+}
+
+function newDataTable(id, columns, data) {
+    let result = document.getElementById(id).DataTable({
+        responsive: true,
+        lengthMenu: [[15, 25, 50, -1], [15, 25, 50, "All"]],
+        "lengthChange": true,
+        data,
+        columns
+    });
+    $('select').formSelect();
+    return result;
+}
+
+// try {
+//     const result =
+//     const outputArea = document.getElementById('outputArea');
+//     outputArea.textContent = "Valid Code";
+//     outputArea.style.color = "#3cb500";  // Set text color to green for valid code
+// } catch (error) {
+//     const outputArea = document.getElementById('outputArea');
+//     outputArea.textContent = "Invalid Code";
+//     outputArea.style.color = "red";  // Set text color to red for invalid code
+//     console.error(error);
+//     let errorType = "sintáctico";
+//     if (error.name === "SyntaxError") {
+//         errorType = "sintáctico";
+//     } else if (error.name === "LexicalError") { // assuming you have a LexicalError type defined
+//         errorType = "léxico";
+//     }
+
+//     const row = document.createElement('tr');
+//     row.innerHTML = `
+//         <td>1</td>
+//         <td>${error.message}</td>
+//         <td>${error.location ? error.location.start.line : '-'}</td>
+//         <td>${error.location ? error.location.start.column : '-'}</td>
+//         <td>${errorType}</td>
+//     `;
+//     errorTableBody.appendChild(row);
+//     document.getElementById('output').textContent = `Error: ${error.message}\n` +
+//         `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
+//         `Type: ${errorType}`;
+// }
