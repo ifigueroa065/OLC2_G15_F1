@@ -7,7 +7,7 @@ npm install -g peggy
 ## Comandos para ejecutar
 
 ```sh
-peggy -o parser.js grammar.pegjs
+peggy -o parser.js grammarIsai.pegjs
 ```
 
 ### Última parte del parser
