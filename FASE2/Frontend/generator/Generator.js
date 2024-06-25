@@ -33,3 +33,27 @@ class Generator {
 
 
 }
+
+function addQuadToTable(quad) {
+    const table = document.getElementById('quadTable').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+
+    // Inserta las celdas en el orden correcto
+    const cellOp = newRow.insertCell(0);
+    const cellArg1 = newRow.insertCell(1);
+    const cellArg2 = newRow.insertCell(2);
+    const cellArg3 = newRow.insertCell(3);
+    const cellArg4 = newRow.insertCell(4);
+    const cellArg5 = newRow.insertCell(5);
+    const cellResult = newRow.insertCell(6);
+
+    // Asigna los valores a las celdas en el orden correcto
+    cellOp.innerHTML = quad.op;
+    cellArg1.innerHTML = quad.arg1;
+    cellArg2.innerHTML = quad.arg2;
+    cellArg3.innerHTML = quad.arg3;
+    cellArg4.innerHTML = quad.arg4;
+    cellArg5.innerHTML = quad.arg5;
+    cellResult.innerHTML = quad.res;
+}
+

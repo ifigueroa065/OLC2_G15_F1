@@ -284,6 +284,16 @@ function analysis() {
         console.log("Cuadruplos: ");
         console.log(gen.getQuadruples());
 
+        const quadruples = gen.getQuadruples();
+
+        // Limpiar la tabla antes de agregar nuevos cuádruplos
+        const table = document.getElementById('quadTable').getElementsByTagName('tbody')[0];
+        table.innerHTML = '';
+    
+        // Agregar cada cuádruplo a la tabla
+        quadruples.forEach(quad => addQuadToTable(quad));
+
+        
         // Generando cuádruplos
         //addDataToQuadTable(gen.getQuadruples());
 
