@@ -246,9 +246,7 @@ function CargarInfo() {
 
 document.getElementById('fileInputButton').addEventListener('click', loadFile);
 
-$(document).ready(function () {
 
-});
 
 function analysis() {
     const input = document.getElementById(`inputArea${activeTabId}`).value;
