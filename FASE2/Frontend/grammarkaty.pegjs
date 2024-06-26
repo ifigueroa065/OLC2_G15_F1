@@ -207,33 +207,63 @@ ble_inst "Instrucción BLE"
             return node;
         }
 
-// Instrucciones Suma 64 bits y 32 bits (ADD)
+//* -------------------------- Instrucciones de Suma 64 bits y 32 bits (ADD)
 add_inst "Instrucción de Suma"
     = _* "ADD"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:(operand64 / negative_immediate) _* comment? "\n"?
         {
             const node = createNode('INSTRUCTION', 'ADD');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            console.log('Setting InsExpr for rdNode:', rdNode);
+            setInsExpr(rdNode, getInsExpr(rd));
+
+            console.log('Setting InsExpr for src1Node:', src1Node);
+            setInsExpr(src1Node, getInsExpr(src1));
+
+            console.log('Setting InsExpr for src2Node:', src2Node);
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let add = new Add(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, add);
+
             return node;
         }
-    / _* "ADD"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:(operand32 / negative_immediate) _* comment? "\n"?
+    / _* "ADD"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:(operand32/ negative_immediate) _* comment? "\n"?
         {
             const node = createNode('INSTRUCTION', 'ADD');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            console.log('Setting InsExpr for rdNode:', rdNode);
+            setInsExpr(rdNode, getInsExpr(rd));
+
+            console.log('Setting InsExpr for src1Node:', src1Node);
+            setInsExpr(src1Node, getInsExpr(src1));
+
+            console.log('Setting InsExpr for src2Node:', src2Node);
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let add = new Add(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, add);
+
             return node;
         }
-//
+
 msub_inst "Instrucción MSUB"
     = _* "MSUB"i _* rd:reg64_or_reg32 _* "," _* src1:reg64_or_reg32 _* "," _* src2:reg64_or_reg32 _* "," _* src3:reg64_or_reg32 _* comment? "\n"?
     {
@@ -507,11 +537,21 @@ div_inst
             const node = createNode('INSTRUCTION', 'DIV');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let div = new Div(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, div);
+
             return node;
         }
     / _* "DIV"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
@@ -519,13 +559,27 @@ div_inst
             const node = createNode('INSTRUCTION', 'DIV');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let div = new Div(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, div);
+
             return node;
         }
+
+
+
+//* -------- Instrucciones de División sin signo 64 bits y 32 bits (UDIV)
 // Instrucciones de División sin signo 64 bits y 32 bits (UDIV)
 udiv_inst
     = _* "UDIV"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:operand64 _* comment? "\n"?
@@ -533,11 +587,21 @@ udiv_inst
             const node = createNode('INSTRUCTION', 'UDIV');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let udiv = new UDiv(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, udiv);
+
             return node;
         }
     / _* "UDIV"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
@@ -545,13 +609,28 @@ udiv_inst
             const node = createNode('INSTRUCTION', 'UDIV');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let udiv = new UDiv(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, udiv);
+
             return node;
         }
+
+
+
+        
+//* ---------- Instrucciones de División con signo 64 bits y 32 bits (SDIV)
 // Instrucciones de División con signo 64 bits y 32 bits (SDIV)
 sdiv_inst
     = _* "SDIV"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:operand64 _* comment? "\n"?
@@ -559,11 +638,21 @@ sdiv_inst
             const node = createNode('INSTRUCTION', 'SDIV');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let sdiv = new SDiv(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, sdiv);
+
             return node;
         }
     / _* "SDIV"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
@@ -571,25 +660,48 @@ sdiv_inst
             const node = createNode('INSTRUCTION', 'SDIV');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let sdiv = new SDiv(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, sdiv);
+
             return node;
         }
-// Instrucciones AND 64 bits y 32 bits (AND)        
+
+
+//* -------------------------- Instrucciones AND 64 bits y 32 bits (AND)
+// Instrucciones AND 64 bits y 32 bits (AND)
 and_inst
     = _* "AND"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:operand64 _* comment? "\n"?
         {
             const node = createNode('INSTRUCTION', 'AND');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let and = new And(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, and);
+
             return node;
         }
     / _* "AND"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
@@ -597,13 +709,28 @@ and_inst
             const node = createNode('INSTRUCTION', 'AND');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let and = new And(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, and);
+
             return node;
         }
+
+
+
+
+//* ------------------------------- Instrucciones OR 64 bits y 32 bits (ORR)
 // Instrucciones OR 64 bits y 32 bits (ORR)
 orr_inst
     = _* "ORR"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:operand64 _* comment? "\n"?
@@ -611,11 +738,21 @@ orr_inst
             const node = createNode('INSTRUCTION', 'ORR');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let orr = new Orr(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, orr);
+
             return node;
         }
     / _* "ORR"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
@@ -623,13 +760,27 @@ orr_inst
             const node = createNode('INSTRUCTION', 'ORR');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let orr = new Orr(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, orr);
+
             return node;
         }
+
+
+        
+//* ------------- Instrucciones XOR 64 bits y 32 bits (EOR)
 // Instrucciones XOR 64 bits y 32 bits (EOR)
 eor_inst
     = _* "EOR"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:operand64 _* comment? "\n"?
@@ -637,11 +788,21 @@ eor_inst
             const node = createNode('INSTRUCTION', 'EOR');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let eor = new Eor(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, eor);
+
             return node;
         }
     / _* "EOR"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
@@ -649,13 +810,27 @@ eor_inst
             const node = createNode('INSTRUCTION', 'EOR');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
+            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
+            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2);
+            addChild(node, src2Node);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(src1Node, getInsExpr(src1));
+            setInsExpr(src2Node, getInsExpr(src2));
+
+            let eor = new Eor(rdNode, src1Node, src2Node, 0, 0);
+            setInsExpr(node, eor);
+
             return node;
         }
+
+
+        
+// Instrucción MOV 64 bits y 32 bits (MOV)
 mov_inst "Instrucción MOV"
   = _* "MOV"i _* rd:reg64_or_reg32 _* "," _* src:mov_source _* comment? "\n"?
   {
@@ -667,10 +842,10 @@ mov_inst "Instrucción MOV"
     addChild(node, rdNode);
     addChild(node, srcNode);
     // Fase 2 y 3
-    /*setInsExpr(srcNode, getInsExpr(src));
+    setInsExpr(srcNode, getInsExpr(src));
     setInsExpr(rdNode, getInsExpr(rd));
     let mov = new Mov(rdNode, srcNode, 0, 0);
-    setInsExpr(node, mov);*/
+    setInsExpr(node, mov);
     return node;
   }
 
@@ -871,7 +1046,6 @@ str_inst "Instrucción STR"
             addChild(node, srcNode);
             return node;
         }
-
 str_source 
     = "[" _* r1:reg64_or_reg32 _* "," _* r2:reg64_or_reg32 _* "]"
         {
@@ -953,6 +1127,9 @@ stp_inst "Instrucción STP"
             addChild(node, srcNode);
             return node;
         }
+
+
+//* ------------------------------  Instrucción Move Not (MVN)
 // Instrucción Move Not (MVN)
 mvn_inst "Instrucción MVN"
     = _* "MVN"i _* rd:reg64 _* "," _* src:mov_source _* comment? "\n"?
@@ -964,6 +1141,13 @@ mvn_inst "Instrucción MVN"
             addChild(srcNode, src);
             addChild(node, rdNode);
             addChild(node, srcNode);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(srcNode, getInsExpr(src));
+
+            let mvn = new Mvn(rdNode, srcNode, 0, 0);
+            setInsExpr(node, mvn);
+
             return node;
         }
     / _* "MVN"i _* rd:reg32 _* "," _* src:mov_source _* comment? "\n"?
@@ -975,8 +1159,16 @@ mvn_inst "Instrucción MVN"
             addChild(srcNode, src);
             addChild(node, rdNode);
             addChild(node, srcNode);
+
+            setInsExpr(rdNode, getInsExpr(rd));
+            setInsExpr(srcNode, getInsExpr(src));
+
+            let mvn = new Mvn(rdNode, srcNode, 0, 0);
+            setInsExpr(node, mvn);
+
             return node;
         }
+
 
 // Instrucción Logial Shift Left (LSL)
 lsl_inst "Instrucción LSL"
@@ -1191,38 +1383,33 @@ svc_inst "Instrucción SVC"
         }
 
 
-// Registros de propósito general 64 bits (limitado a los registros válidos de ARM64)
+//*----- Registros de propósito general 64 bits (limitado a los registros válidos de ARM64)
+// Registros de propósito general 64 bits
 reg64 "Registro_64_Bits"
-    = "x"i ("30" / [12][0-9] / [0-9])
+    = "x"i ([0-9] / [12][0-9])
         {
             const node = createNode('RG_64_BITS', 'reg64');
             setValue(node, text());
-            // Fase 2 y 3
             const reg = new Registro(text(), TipoRegistro.RG_64_BITS, 0, 0);
             setInsExpr(node, reg);
             return node;
         }
-    / "SP"i // Stack Pointer
-        {
-            const node = createNode('R_STACK_POINTER', 'SP');
-            setValue(node, text());
-            return node;
-        }
-    / "LR"i  // Link Register
+    / "LR"i
         {
             const node = createNode('R_LINK_REGISTER', 'LR');
             setValue(node, text());
             return node;
         }
-    / "ZR"i  // Zero Register
+    / "ZR"i
         {
             const node = createNode('R_ZERO_REGISTER', 'ZR');
             setValue(node, text());
             return node;
         }
-// Registros de propósito general 32 bits (limitado a los registros válidos de ARM64)
+
+// Registros de propósito general 32 bits
 reg32 "Registro_32_Bits"
-    = "w"i ("30" / [12][0-9] / [0-9])
+    = "w"i ([0-9] / [12][0-9])
         {
             const node = createNode('RG_32_BITS', 'reg32');
             setValue(node, text());
@@ -1231,52 +1418,53 @@ reg32 "Registro_32_Bits"
             return node;
         }
 
-// Operando puede ser un registro o un número inmediato
-operand64 "Operandor 64 Bits"
-    = r:reg64 _* "," _* ep:extend_op                 // Registro con extensión de tamaño
-        {
-            const node = createNode('SOURCE2', 'SRC2');
-            addChild(node, r);
-            if(ep){
-            addChild(node, ep);
-            }
-            return node;
-        }  
-    / r:reg64 lp:(_* "," _* shift_op _* immediate)?  // Registro con desplazamiento lógico opcional
-        {
-            const node = createNode('SOURCE2', 'SRC2');
-            addChild(node, r);
-            if(lp){
-                addChild(node, lp[3]);
-                addChild(node, lp[5]);
-            }
-            return node;
-        }   
-    / i:immediate                                     // Valor inmediato
-        {
-            const node = createNode('SOURCE2', 'SRC2');
-            addChild(node, i);
-            return node;
-        }                             
+
 
 // Operando puede ser un registro o un número inmediato
-operand32 "Operandor 32 Bits"
-    = r:reg32 lp:(_* "," _* shift_op _* immediate)?  // Registro con desplazamiento lógico
+operand64 "Operando 64 Bits"
+    = r:reg64 _* "," _* ep:extend_op
         {
             const node = createNode('SOURCE2', 'SRC2');
             addChild(node, r);
-            if(lp){
+            if (ep) {
+                addChild(node, ep);
+            }
+            return node;
+        }
+    / r:reg64 lp:(_* "," _* shift_op _* immediate)?
+        {
+            const node = createNode('SOURCE2', 'SRC2');
+            addChild(node, r);
+            if (lp) {
                 addChild(node, lp[3]);
                 addChild(node, lp[5]);
             }
             return node;
         }
-    / i:immediate                             // Valor inmediato
+    / i:immediate
         {
             const node = createNode('SOURCE2', 'SRC2');
             addChild(node, i);
             return node;
-        
+        }
+
+// Operando puede ser un registro o un número inmediato
+operand32 "Operando 32 Bits"
+    = r:reg32 lp:(_* "," _* shift_op _* immediate)?
+        {
+            const node = createNode('SOURCE2', 'SRC2');
+            addChild(node, r);
+            if (lp) {
+                addChild(node, lp[3]);
+                addChild(node, lp[5]);
+            }
+            return node;
+        }
+    / i:immediate
+        {
+            const node = createNode('SOURCE2', 'SRC2');
+            addChild(node, i);
+            return node;
         }
 
 // Definición de desplazamientos
@@ -1351,17 +1539,17 @@ extend_op "Operador de Extensión"
             return node;
         }
 
-// Definición de valores inmediatos
+//***------- Definición de valores inmediatos
 immediate "Inmediato"
     = integer
         {
             const node = createNode('INMEDIATE_OP', 'Integer');
             setValue(node, text());
-            const integer = new Primitivos(text(), Tipo.NUMBER, 0, 0);
-            setInsExpr(node, integer);
+            const intValue = new Primitivos(text(), Tipo.NUMBER, 0, 0);
+            setInsExpr(node, intValue);
             return node;
         }
-    / "#" "'"letter"'"
+    / "#" "'" letter "'"
         {
             const node = createNode('INMEDIATE_OP', '#');
             setValue(node, text());
@@ -1383,20 +1571,13 @@ immediate "Inmediato"
         {
             const node = createNode('INMEDIATE_OP', '#');
             setValue(node, text());
+            const intValue = new Primitivos(text(), Tipo.NUMBER, 0, 0);
+            setInsExpr(node, intValue);
             return node;
         }
 
-binary_literal "Literal Binario"
-  = "0b" [01]+
-  {
-    const node = createNode('INMEDIATE_OP', 'BinaryLiteral');
-    const binValue = parseInt(text().slice(2), 2); // Convertir binario a decimal
-    setValue(node, binValue.toString());
-    const binLiteral = new Primitivos(binValue, Tipo.NUMBER, 0, 0);
-    setInsExpr(node, binLiteral);
-    return node;
-  }
-  
+binary_literal
+  = [01]+ // Representa uno o más dígitos binarios
 hex_literal
     = [0-9a-fA-F]+ // Representa uno o más dígitos hexadecimales
 letter
