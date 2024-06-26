@@ -2,6 +2,25 @@ let activeTabId = 1; // Variable para almacenar la pestaña activa
 let tabCount = 1; // Contador de pestañas
 let nextTabId = 2; // Siguiente ID único para pestañas
 
+
+let startTime, endTime;
+
+function startTimer() {
+    startTime = new Date().getTime();
+    document.getElementById('executionTimer').innerText = "0";
+}
+
+function stopTimer() {
+    endTime = new Date().getTime();
+    const timeDiff = endTime - startTime;
+    document.getElementById('executionTimer').innerText = timeDiff;
+}
+
+function startAnalysis() {
+    startTimer();
+    analysis();
+}
+
 // Agregado para FASE 2
 let quadTable, symbolTable, consoleResult;
 
@@ -289,7 +308,13 @@ function analysis() {
         table.innerHTML = '';
     
         // Agregar cada cuádruplo a la tabla
-        quadruples.forEach(quad => addQuadToTable(quad));
+        let rowIndex = 0;
+
+        // Agregar cada cuádruplo a la tabla con su índice
+        quadruples.forEach(quad => {
+            addQuadToTable(quad, rowIndex);
+            rowIndex++;
+        });
 
         
         // Generando cuádruplos
@@ -324,6 +349,9 @@ function analysis() {
         document.getElementById('output').textContent = `Error: ${error.message}\n` +
             `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
             `Type: ${errorType}`;
+    }
+    finally {
+        stopTimer();
     }
 }
 

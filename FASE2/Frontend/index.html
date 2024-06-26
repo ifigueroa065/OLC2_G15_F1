@@ -84,7 +84,9 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>ARMv8 Simulator</h2>
-      </div><!-- End Section Title -->
+
+        <h4><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>  <span id="executionTimer"> 0 </span> ms</h4>
+      </div>
 
       <div class="container">
 
@@ -102,7 +104,7 @@
                 download
               </span>
             </button>
-            <button type="button" class="btn btn-success btn-custom btn-analyze" onclick="analysis()">Analyze <span
+            <button type="button" class="btn btn-success btn-custom btn-analyze" onclick="startAnalysis()">Analyze <span
                 class="material-symbols-outlined">
                 troubleshoot
               </span></button>
@@ -159,6 +161,7 @@
             <table id="quadTable"  class="table table-striped table-dark">
               <thead>
                 <tr>
+                  <th>No.</th>
                   <th>Op</th>
                   <th>Arg1</th>
                   <th>Arg2</th>

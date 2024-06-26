@@ -34,20 +34,22 @@ class Generator {
 
 }
 
-function addQuadToTable(quad) {
+function addQuadToTable(quad,rowIndex) {
     const table = document.getElementById('quadTable').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
 
     // Inserta las celdas en el orden correcto
-    const cellOp = newRow.insertCell(0);
-    const cellArg1 = newRow.insertCell(1);
-    const cellArg2 = newRow.insertCell(2);
-    const cellArg3 = newRow.insertCell(3);
-    const cellArg4 = newRow.insertCell(4);
-    const cellArg5 = newRow.insertCell(5);
-    const cellResult = newRow.insertCell(6);
+    const index = newRow.insertCell(0);
+    const cellOp = newRow.insertCell(1);
+    const cellArg1 = newRow.insertCell(2);
+    const cellArg2 = newRow.insertCell(3);
+    const cellArg3 = newRow.insertCell(4);
+    const cellArg4 = newRow.insertCell(5);
+    const cellArg5 = newRow.insertCell(6);
+    const cellResult = newRow.insertCell(7);
 
     // Asigna los valores a las celdas en el orden correcto
+    index.innerHTML = rowIndex+1;
     cellOp.innerHTML = quad.op;
     cellArg1.innerHTML = quad.arg1;
     cellArg2.innerHTML = quad.arg2;
