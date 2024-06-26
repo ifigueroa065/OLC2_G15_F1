@@ -204,12 +204,6 @@ ble_inst "Instrucción BLE"
             const labelNode = createNode('LABEL', 'LBL');
             addChild(labelNode, l);
             addChild(node, labelNode);
-
-            // Fase 2 y 3
-            setInsExpr(labelNode, getInsExpr(l));
-            let ble = new Ble(labelNode, 0, 0);
-            setInsExpr(node, ble);
-
             return node;
         }
 
@@ -342,159 +336,126 @@ csel_inst "Instrucción CSEL"
             addChild(node, condNode);
 
             // Fase 2 y 3
-            setInsExpr(rdNode, getInsExpr(rd));
+           /* setInsExpr(rdNode, getInsExpr(rd));
             setInsExpr(src1Node, getInsExpr(src1));
             setInsExpr(src2Node, getInsExpr(src2));
             setInsExpr(condNode, getInsExpr(cond));
-
             let csel = new Csel(rdNode, src1Node, src2Node, condNode, 0, 0);
-            setInsExpr(node, csel);
+            setInsExpr(node, csel);*/
             return node;
         }
 
-condition "Condición"
-    = "eq"i {
-        const node = createNode('CONDITION', 'EQ');
-        const condExpr = new Primitivos('EQ', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "ne"i {
-        const node = createNode('CONDITION', 'NE');
-        const condExpr = new Primitivos('NE', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "cs"i / "hs"i {
-        const node = createNode('CONDITION', 'CS/HS');
-        const condExpr = new Primitivos('CS/HS', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "cc"i / "lo"i {
-        const node = createNode('CONDITION', 'CC/LO');
-        const condExpr = new Primitivos('CC/LO', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "mi"i {
-        const node = createNode('CONDITION', 'MI');
-        const condExpr = new Primitivos('MI', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "pl"i {
-        const node = createNode('CONDITION', 'PL');
-        const condExpr = new Primitivos('PL', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "vs"i {
-        const node = createNode('CONDITION', 'VS');
-        const condExpr = new Primitivos('VS', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "vc"i {
-        const node = createNode('CONDITION', 'VC');
-        const condExpr = new Primitivos('VC', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "hi"i {
-        const node = createNode('CONDITION', 'HI');
-        const condExpr = new Primitivos('HI', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "ls"i {
-        const node = createNode('CONDITION', 'LS');
-        const condExpr = new Primitivos('LS', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "ge"i {
-        const node = createNode('CONDITION', 'GE');
-        const condExpr = new Primitivos('GE', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "lt"i {
-        const node = createNode('CONDITION', 'LT');
-        const condExpr = new Primitivos('LT', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "gt"i {
-        const node = createNode('CONDITION', 'GT');
-        const condExpr = new Primitivos('GT', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "le"i {
-        const node = createNode('CONDITION', 'LE');
-        const condExpr = new Primitivos('LE', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-    / "al"i {
-        const node = createNode('CONDITION', 'AL');
-        const condExpr = new Primitivos('AL', Tipo.CONDICION, 0, 0);
-        setInsExpr(node, condExpr);
-        return node;
-    }
-
-
 
 //
-ands_inst
+ands_inst "Instrucción ANDS"
     = _* "ANDS"i _* rd:reg64 _* "," _* src1:reg64 _* "," _* src2:operand64 _* comment? "\n"?
         {
             const node = createNode('INSTRUCTION', 'ANDS');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
-            const src2Node = createNode('SOURCE2', 'SRC2');
             addChild(rdNode, rd);
             addChild(src1Node, src1);
-            addChild(src2Node, src2);
             addChild(node, rdNode);
             addChild(node, src1Node);
-            addChild(node, src2Node);
-
-            setInsExpr(rdNode, getInsExpr(rd));
-            setInsExpr(src1Node, getInsExpr(src1));
-            setInsExpr(src2Node, getInsExpr(src2));
-
-            let ands = new Ands(rdNode, src1Node, src2Node, 0, 0);
-            setInsExpr(node, ands);
-
-            return node;
-        }
-    / _* "ANDS"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
-        {
-            const node = createNode('INSTRUCTION', 'ANDS');
-            const rdNode = createNode('DESTINATION', 'RD');
-            const src1Node = createNode('SOURCE1', 'SRC1');
-            const src2Node = createNode('SOURCE2', 'SRC2');
-            addChild(rdNode, rd);
-            addChild(src1Node, src1);
-            addChild(src2Node, src2);
-            addChild(node, rdNode);
-            addChild(node, src1Node);
-            addChild(node, src2Node);
-
-            setInsExpr(rdNode, getInsExpr(rd));
-            setInsExpr(src1Node, getInsExpr(src1));
-            setInsExpr(src2Node, getInsExpr(src2));
-
-            let ands = new Ands(rdNode, src1Node, src2Node, 0, 0);
-            setInsExpr(node, ands);
-
+            addChild(node, src2);
             return node;
         }
 
 
 //
+// Condiciones adicionales
+condition "Condición"
+    = "eq"i
+        {
+            const node = createNode('CONDITION', 'EQ');
+            setValue(node, text());
+            return node;
+        }
+    / "ne"i
+        {
+            const node = createNode('CONDITION', 'NE');
+            setValue(node, text());
+            return node;
+        }
+    / "cs"i / "hs"i
+        {
+            const node = createNode('CONDITION', 'CS/HS');
+            setValue(node, text());
+            return node;
+        }
+    / "cc"i / "lo"i
+        {
+            const node = createNode('CONDITION', 'CC/LO');
+            setValue(node, text());
+            return node;
+        }
+    / "mi"i
+        {
+            const node = createNode('CONDITION', 'MI');
+            setValue(node, text());
+            return node;
+        }
+    / "pl"i
+        {
+            const node = createNode('CONDITION', 'PL');
+            setValue(node, text());
+            return node;
+        }
+    / "vs"i
+        {
+            const node = createNode('CONDITION', 'VS');
+            setValue(node, text());
+            return node;
+        }
+    / "vc"i
+        {
+            const node = createNode('CONDITION', 'VC');
+            setValue(node, text());
+            return node;
+        }
+    / "hi"i
+        {
+            const node = createNode('CONDITION', 'HI');
+            setValue(node, text());
+            return node;
+        }
+    / "ls"i
+        {
+            const node = createNode('CONDITION', 'LS');
+            setValue(node, text());
+            return node;
+        }
+    / "ge"i
+        {
+            const node = createNode('CONDITION', 'GE');
+            setValue(node, text());
+            return node;
+        }
+    / "lt"i
+        {
+            const node = createNode('CONDITION', 'LT');
+            setValue(node, text());
+            return node;
+        }
+    / "gt"i
+        {
+            const node = createNode('CONDITION', 'GT');
+            setValue(node, text());
+            return node;
+        }
+    / "le"i
+        {
+            const node = createNode('CONDITION', 'LE');
+            setValue(node, text());
+            return node;
+        }
+    / "al"i
+        {
+            const node = createNode('CONDITION', 'AL');
+            setValue(node, text());
+            return node;
+        }
+
 
 
 //
@@ -957,13 +918,22 @@ mov_source "Source para MOV"
   = reg64_or_reg32
   / immediate
   / negative_immediate
-  / "#" char_literal
+  / "#" _* binary_literal
   {
-    const node = createNode('INMEDIATE_OP', 'Character');
-    const charValue = text().charCodeAt(2); // Obtener el valor ASCII del carácter
-    setValue(node, charValue.toString());
-    const charLiteral = new Primitivos(charValue, Tipo.NUMBER, 0, 0);
-    setInsExpr(node, charLiteral);
+    const node = createNode('INMEDIATE_OP', 'BinaryLiteral');
+    const binValue = parseInt(text().slice(1), 2); // Convertir binario a decimal
+    setValue(node, binValue.toString());
+    const binLiteral = new Primitivos(binValue, Tipo.NUMBER, 0, 0);
+    setInsExpr(node, binLiteral);
+    return node;
+  }
+  / binary_literal
+  {
+    const node = createNode('INMEDIATE_OP', 'BinaryLiteral');
+    const binValue = parseInt(text().slice(2), 2); // Convertir binario a decimal
+    setValue(node, binValue.toString());
+    const binLiteral = new Primitivos(binValue, Tipo.NUMBER, 0, 0);
+    setInsExpr(node, binLiteral);
     return node;
   }
   / char_literal
@@ -975,73 +945,22 @@ mov_source "Source para MOV"
     setInsExpr(node, charLiteral);
     return node;
   }
-  / "0b" binary_literal
+  / "#" char_literal
   {
-    const binaryValue = parseInt(text().slice(2), 2); // Convertir binario a decimal
-    const node = createNode('INMEDIATE_OP', 'Binary');
-    setValue(node, binaryValue.toString());
-    const binaryLiteral = new Primitivos(binaryValue, Tipo.NUMBER, 0, 0);
-    setInsExpr(node, binaryLiteral);
+    const node = createNode('INMEDIATE_OP', 'Character');
+    const charValue = text().charCodeAt(2); // Obtener el valor ASCII del carácter
+    setValue(node, charValue.toString());
+    const charLiteral = new Primitivos(charValue, Tipo.NUMBER, 0, 0);
+    setInsExpr(node, charLiteral);
     return node;
   }
-
-immediate "Inmediato"
-  = integer
-    {
-        const node = createNode('INMEDIATE_OP', 'Integer');
-        setValue(node, text());
-        const intValue = new Primitivos(text(), Tipo.NUMBER, 0, 0);
-        setInsExpr(node, intValue);
-        return node;
-    }
-  / "#" "'" letter "'"
-    {
-        const node = createNode('INMEDIATE_OP', 'Character');
-        const charValue = text().charCodeAt(2); // Obtener el valor ASCII del carácter
-        setValue(node, charValue.toString());
-        const charLiteral = new Primitivos(charValue, Tipo.NUMBER, 0, 0);
-        setInsExpr(node, charLiteral);
-        return node;
-    }
-  / "#" "0x" hex_literal
-    {
-        const node = createNode('INMEDIATE_OP', 'HexLiteral');
-        const hexValue = parseInt(text().slice(3), 16); // Convertir hexadecimal a decimal
-        setValue(node, hexValue.toString());
-        const hexLiteral = new Primitivos(hexValue, Tipo.NUMBER, 0, 0);
-        setInsExpr(node, hexLiteral);
-        return node;
-    }
-  / "#" "0b" binary_literal
-    {
-        const binaryValue = parseInt(text().slice(3), 2); // Convertir binario a decimal
-        const node = createNode('INMEDIATE_OP', 'Binary');
-        setValue(node, binaryValue.toString());
-        const binaryLiteral = new Primitivos(binaryValue, Tipo.NUMBER, 0, 0);
-        setInsExpr(node, binaryLiteral);
-        return node;
-    }
- / "#" integer
-    {
-        const node = createNode('INMEDIATE_OP', 'Integer');
-        setValue(node, text().slice(1)); // Remover el prefijo #
-        const intValue = new Primitivos(node.value, Tipo.NUMBER, 0, 0);
-        setInsExpr(node, intValue);
-        return node;
-    }
-
-
-binary_literal
-  = [0-1]+ // Representa uno o más dígitos binarios
-hex_literal
-    = [0-9a-fA-F]+ // Representa uno o más dígitos hexadecimales
-letter
-    = [a-zA-Z] 
 
 char_literal "Carácter"
     = "'" [a-zA-Z] "'"
     {
-        return text();
+        const node = createNode('INMEDIATE_OP', 'Character');
+        setValue(node, text());
+        return node;
     }
 
 //* ---- Definición de valores inmediatos negativos
@@ -1558,7 +1477,7 @@ ror_inst "Instrucción ROR"
         }
     / _* "ROR"i _* rd:reg32 _* "," _* src1:reg32 _* "," _* src2:operand32 _* comment? "\n"?
         {
-            const node = createNode('INSTRUCTION', 'ROR');
+           const node = createNode('INSTRUCTION', 'ROR');
             const rdNode = createNode('DESTINATION', 'RD');
             const src1Node = createNode('SOURCE1', 'SRC1');
             const src2Node = createNode('SOURCE2', 'SRC2');
@@ -1907,7 +1826,7 @@ extend_op "Operador de Extensión"
         }
 
 //***------- Definición de valores inmediatos
-/*immediate "Inmediato"
+immediate "Inmediato"
     = integer
         {
             const node = createNode('INMEDIATE_OP', 'Integer');
@@ -1941,9 +1860,14 @@ extend_op "Operador de Extensión"
             const intValue = new Primitivos(text(), Tipo.NUMBER, 0, 0);
             setInsExpr(node, intValue);
             return node;
-        }*/
+        }
 
-
+binary_literal
+  = [01]+ // Representa uno o más dígitos binarios
+hex_literal
+    = [0-9a-fA-F]+ // Representa uno o más dígitos hexadecimales
+letter
+    = [a-zA-Z] 
 // Expresiones
 expression "Expresión"
     = label
@@ -1960,8 +1884,6 @@ label "Etiqueta"
         {
             const node = createNode('LABEL', text());
             setValue(node, text());
-            const labelExpr = new Primitivos(text(), Tipo.LABEL, 0, 0);
-            setInsExpr(node, labelExpr);
             return node;
         }
 

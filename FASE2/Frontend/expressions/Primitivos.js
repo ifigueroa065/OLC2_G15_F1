@@ -1,4 +1,4 @@
-class Primitivos extends Expression{
+class Primitivos extends Expression {
     constructor(value, type, line, col) {
         super();
         this.value = value;
@@ -8,9 +8,7 @@ class Primitivos extends Expression{
     }
 
     execute(env) {
-        console.log('Executing Primitivos');
-        // validar que tipo de primitivo es según el tipo y devolver ese valor.
-        // cuando aplique ya el tema de lógica (memoria) hay que ver bien que se devuelve.
+        console.log('Executing Primitivos with value:', this.value, 'and type:', this.type);
         
         if (this.type === Tipo.NUMBER) {
             return new Retorno(this.value, Tipo.NUMBER, this.type);
@@ -18,7 +16,8 @@ class Primitivos extends Expression{
             return new Retorno(this.value, Tipo.CARACTER, this.type);
         } else if (this.type === Tipo.NULL) {
             return new Retorno(this.value, Tipo.NULL, this.type);
+        } else if (this.type === Tipo.CONDICION) {
+            return new Retorno(this.value, Tipo.CONDICION, this.type);
         }
     }
-
 }

@@ -30,6 +30,6 @@ class Mov extends Instruction{
             // _d = _s;
         
         // 3.2. Realizar la lógica de generación de Quadruples
-        gen.addQuadruple('MOV', retornoDestino.valor, retornoSource.valor,'-', '-', '-', retornoDestino.valor);
+        gen.addQuadruple('MOV', retornoSource.valor, '-','-', '-', '-', retornoDestino.valor);
     }
 }
