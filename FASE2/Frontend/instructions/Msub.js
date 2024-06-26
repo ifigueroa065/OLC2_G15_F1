@@ -23,6 +23,6 @@ class Msub extends Instruction {
         let retornoSource3 = this.source3?._InsExpr?.execute(env);
 
         // Realizar la lógica de generación de Quadruples
-        gen.addQuadruple('MSUB', retornoDestino.valor, retornoSource1.valor, retornoSource2.valor, retornoSource3.valor, '-', retornoDestino.valor);
+        gen.addQuadruple('MSUB', retornoSource1.valor, retornoSource2.valor, retornoSource3.valor, '-', '-', retornoDestino.valor);
     }
 }

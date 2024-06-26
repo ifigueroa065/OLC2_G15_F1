@@ -30,6 +30,6 @@ class Uxtb extends Instruction{
             // _d = _s;
         
         // 3.2. Realizar la lógica de generación de Quadruples
-        gen.addQuadruple('UXTB', retornoDestino.valor, retornoSource.valor,'-', '-', '-', retornoDestino.valor);
+        gen.addQuadruple('UXTB',  retornoSource.valor,'-','-', '-', '-', retornoDestino.valor);
     }
 }
