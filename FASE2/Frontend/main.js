@@ -298,6 +298,12 @@ function analysis() {
         // Generando gráfica
         let astDot = result.getDot(result);
 
+        console.log("Tabla de símbolos: " + astDot);
+
+        var codigodot = astDot;
+        d3.select("#lienzo1").graphviz()
+        .renderDot(codigodot)
+
         console.log("Cuadruplos: ");
         console.log(gen.getQuadruples());
 

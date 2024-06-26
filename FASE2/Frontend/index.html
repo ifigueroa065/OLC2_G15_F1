@@ -27,7 +27,12 @@
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  <!-- Main CSS File -->
+  
+    <script src="https://superal.github.io/canvas2image/canvas2image.js "></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>         
+
+    <!-- Main CSS File -->
   <link href="./assets/css/main.css" rel="stylesheet">
 </head>
 
@@ -45,6 +50,8 @@
         <ul>
           <li><a href="#compilador">Simulator</a></li>
           <li><a href="#team">Team</a></li>
+          <li><a href="#sectionArbol">Árbol</a></li>
+          <li><a href="#sectionQuadTable">Cuadruplos</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -213,7 +220,20 @@
 
       </section><!-- /Services Section -->
 
+      <section id="sectionArbol" class="services section">
+        <!-- Section Title -->
+        <div class="container section-title" data-aos="fade-up">
+          <h2>Árbol</h2>
+        </div><!-- End Section Title -->
 
+        <div class="tab1" id="lienzo1">
+          
+          <script src="//d3js.org/d3.v5.min.js"></script>
+          <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+          <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>  
+        </div>
+
+      </section>
 
       <!-- Team Section -->
       <section id="team" class="team section">
