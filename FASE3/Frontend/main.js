@@ -1,6 +1,7 @@
 let activeTabId = 1; // Variable para almacenar la pestaña activa
 let tabCount = 1; // Contador de pestañas
 let nextTabId = 2; // Siguiente ID único para pestañas
+Singleton.getInstance();
 
 
 let startTime, endTime;
@@ -270,6 +271,7 @@ document.getElementById('fileInputButton').addEventListener('click', loadFile);
 function analysis() {
     const input = document.getElementById(`inputArea${activeTabId}`).value;
     const errorTableBody = document.getElementById('TBODY');
+    const memoryManager = Singleton.getInstance();
 
     // Remove previous error rows
     while (errorTableBody.firstChild) {
@@ -293,7 +295,7 @@ function analysis() {
         // Obteniendo árbol
         let result = parser.parse(input);
         // Ejecutando instrucciones
-        RootExecuter(result, env, gen, memo);
+        RootExecuter(result, env, gen, memoryManager);
 
         // Generando gráfica
         let astDot = result.getDot(result);
@@ -328,7 +330,6 @@ function analysis() {
 
         // Agregando salida válida en consola
         //consoleResult.setValue("VALIDO");
-        
         const outputArea = document.getElementById('outputArea');
         outputArea.textContent = "Valid Code";
         outputArea.style.color = "#3cb500";  // Set text color to green for valid code
@@ -414,3 +415,6 @@ function newDataTable(id, columns, data) {
 //         `Line: ${error.location ? error.location.start.line : '-'}, Column: ${error.location ? error.location.start.column : '-'}\n` +
 //         `Type: ${errorType}`;
 // }
+
+
+
