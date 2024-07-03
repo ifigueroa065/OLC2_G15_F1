@@ -13,20 +13,22 @@ class B extends Instruction{
     }
 
     execute(env, gen, memo) {
-        console.log('Executing B');
-        console.log('destination', this.destination);
-        // Implementar lógica de instrucción mov básicamente.
-        // 1. Obtener el valor de la variable op1
-            // let _d = destion?.execute(env);
-            console.log('destination', this.destination);
-        // 2. Obtener el valor de la variable op2
-            // let _s = source?.execute(env);
-            //let retornoSource = this.source?._InsExpr?.execute('-');
-        // 3.1. Realizar la operación de asignación
-            // _d = _s;
+        console.log('Executing B {', this.destination, '}');
         
-        // 3.2. Realizar la lógica de generación de Quadruples
-        memo.saludar();
+        // 1. lógica
+        const memoryManager = Singleton.getInstance();
+        const label = memoryManager.getLabel(this.destination);
+        console.log('label', label);
+        if (label) {
+            label._InsExpr.execute(env, gen);
+        } else {
+            console.log('Label not found');
+        }
+        // Termina de ejecutar salto de etiqueta.
+        // entonces se debe obviar el resto de instrucciones desde donde se llamo el salto.
+        memoryManager.setJump(true);
+
+        // 2. quadruplo
         gen.addQuadruple('B', '-','-', '-', '-', '-', this.destination.value);
     }
 }

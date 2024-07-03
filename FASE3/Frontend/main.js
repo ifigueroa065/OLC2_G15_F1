@@ -272,6 +272,8 @@ function analysis() {
     const input = document.getElementById(`inputArea${activeTabId}`).value;
     const errorTableBody = document.getElementById('TBODY');
     const memoryManager = Singleton.getInstance();
+    memoryManager.resetSingleton();
+    console.log('memoryManager', memoryManager);
 
     // Remove previous error rows
     while (errorTableBody.firstChild) {
@@ -300,11 +302,11 @@ function analysis() {
         // Generando gráfica
         let astDot = result.getDot(result);
 
-        console.log("Tabla de símbolos: " + astDot);
+        //console.log("Tabla de símbolos: " + astDot);
 
         var codigodot = astDot;
         d3.select("#lienzo1").graphviz()
-        .renderDot(codigodot)
+            .renderDot(codigodot)
 
         console.log("Cuadruplos: ");
         console.log(gen.getQuadruples());
@@ -314,7 +316,7 @@ function analysis() {
         // Limpiar la tabla antes de agregar nuevos cuádruplos
         const table = document.getElementById('quadTable').getElementsByTagName('tbody')[0];
         table.innerHTML = '';
-    
+
         // Agregar cada cuádruplo a la tabla
         let rowIndex = 0;
 
@@ -324,7 +326,7 @@ function analysis() {
             rowIndex++;
         });
 
-        
+
         // Generando cuádruplos
         //addDataToQuadTable(gen.getQuadruples());
 
@@ -338,13 +340,12 @@ function analysis() {
         outputArea.textContent = "Invalid Code";
         outputArea.style.color = "red";  // Set text color to red for invalid code
         console.error(error);
-        let errorType = "sintáctico";
-        if (error.name === "SyntaxError") {
-            errorType = "sintáctico";
-        } else if (error.name === "LexicalError") { // assuming you have a LexicalError type defined
+        let errorType = "Semantico";
+        if (isLexicalError(error)) {
             errorType = "léxico";
+        } else if (isSintacticError(error.message)) {
+            errorType = "sintáctico";
         }
-
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>1</td>
@@ -418,3 +419,24 @@ function newDataTable(id, columns, data) {
 
 
 
+function isLexicalError(e) {
+    const validIdentifier = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+    const validInteger = /^[0-9]+$/;
+    const validRegister = /^[a-zA-Z][0-9]+$/;
+    const validCharacter = /^[a-zA-Z0-9_$,\[\]#"]$/;
+    if (e.found) {
+        if (!validIdentifier.test(e.found) &&
+            !validInteger.test(e.found) &&
+            !validRegister.test(e.found) &&
+            !validCharacter.test(e.found)) {
+            return true; // Error léxico
+        }
+    }
+    return false; // Error sintáctico
+}
+
+
+function isSintacticError(texto) {
+    const cadenaBuscada = "Expected \":\" or Ignorado but";
+    return texto.startsWith(cadenaBuscada);
+}

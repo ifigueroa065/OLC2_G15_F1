@@ -103,7 +103,7 @@
 }
 // Iniciamos el análisis sintáctico con la regla inicial "start"
 start
-  = line:(label_directive / directive / section / instruction / comment / mcomment / blank_line)*
+  = line:( global / label_directive / directive / instruction / comment / mcomment / blank_line)*
   {
     root.children = [...line];
     root.children = root.children.filter(node => node.type !== 'EMPTY');
@@ -111,28 +111,54 @@ start
     return root;
   }
 
+global = ".global"i _* label:label _* comment? "\n"?{
+    const node = createNode('GLOBAL', label.value);
+    let global = new Global(label.value, 0, 0);
+    setInsExpr(node, global);
+    return node;
+}
+
+section 
+    = line:(label_directive / instruction / comment / mcomment / blank_line)*
+  {
+    let section = createNode('SECTION', 'SECTION');
+    section.children = [...line];
+    section.children = section.children.filter(node => node.type !== 'EMPTY');
+    section.children = section.children.filter(node => node.type !== 'COMMENT');
+    return section;
+  }
+
 // Directivas en ARM64 v8
 directive
-  = _* name:directive_p _* args:(directive_p / label / string / expression / immediate)? _* comment? "\n"?
+  = _* name:directive_p _* ins:section? _* comment? "\n"?
   {
     const node = createNode('DIRECTIVE', 'Directive');
     addChild(node, name);
-    if(args){
-        addChild(node, args);
+    addChild(node, ins);
+    let directive;
+    if (name.value === '.text') {
+        directive = new Text(null, 0, 0);
+    }else if(name.value === '.data'){
+        directive = new Data(null, 0, 0);
     }
+    setInsExpr(node, directive);
     return node;
   }
 //
 label_directive
-  = _* lbl:label _* ":" _* dir:directive _* comment? "\n"?
+  = _* lbl:label _* ":" _* section:section? _* comment? "\n"?
   {
     const node = createNode('LABEL_DIRECTIVE', 'LabelDirective');
     const labelNode = createNode('LABEL', 'Label');
-    const directiveNode = createNode('DIRECTIVE', 'Directive');
     setValue(labelNode, lbl.value);
-    addChild(directiveNode, dir);
     addChild(node, labelNode);
-    addChild(node, directiveNode);
+    addChild(node, section);
+    // Fase 3
+    let label = new Label(lbl.value, section, 0, 0);
+    setInsExpr(node, label);
+    const memoryManager = Singleton.getInstance();
+    console.log('memoryManager', memoryManager);
+    memoryManager.setLabel(lbl.value, node);
     return node;
   }
 
@@ -146,17 +172,7 @@ directive_p
 // Nombre de las directivas
 directive_name
   = "align" / "ascii" / "asciz" / "byte" / "hword" / "word" / "quad" /
-    "data" / "text" / "global" / "section" / "space" / "zero" / "incbin" / "set" / "equ" / "bss"/ "skip"
-
-// Secciones
-section
-  = _* label:label _* ":" _* comment? "\n"?
-  {
-    const node = createNode('SECTION', 'Section');
-    addChild(node, label);
-    return node;
-  }
-
+    "data" / "text" / "section" / "space" / "zero" / "incbin" / "set" / "equ" / "bss"/ "skip"
 
 // Instrucciones en ARM64 v8 
 instruction
@@ -1595,7 +1611,7 @@ cmp_inst "Instrucción CMP"
             setInsExpr(src1Node, getInsExpr(src1));
             setInsExpr(src2Node, getInsExpr(src2))
     
-            let cmp = new Cmp(src1,src2);
+            let cmp = new Cmp(getInsExpr(src1), getInsExpr(src2), 0, 0);
             setInsExpr(node, cmp);
             return node;
         }
@@ -1613,7 +1629,7 @@ cmp_inst "Instrucción CMP"
             setInsExpr(src1Node, getInsExpr(src1));
             setInsExpr(src2Node, getInsExpr(src2))
     
-            let cmp = new Cmp(src1,src2);
+            let cmp = new Cmp(getInsExpr(src1), getInsExpr(src2), 0, 0);
             setInsExpr(node, cmp);
             return node;
         }
@@ -1628,8 +1644,7 @@ b_inst "Instrucción B"
             addChild(node, labelNode);
 
              // Fase 2 y 3
-            setInsExpr(labelNode, getInsExpr(l));
-            let B_inst = new B(l);
+            let B_inst = new B(l.value);
             setInsExpr(node, B_inst);
             return node;
         }
@@ -1672,7 +1687,7 @@ beq_inst "Instrucción BEQ"
 
             // Fase 2 y 3
             setInsExpr(labelNode, getInsExpr(l));
-            let Beq_inst = new Beq(l);
+            let Beq_inst = new Beq(l.value);
             setInsExpr(node, Beq_inst);
             return node;
         }
@@ -1720,7 +1735,7 @@ blt_inst "Instrucción BLT"
 
             // Fase 2 y 3
             setInsExpr(labelNode, getInsExpr(l));
-            let Blt_inst = new Blt(l);
+            let Blt_inst = new Blt(l.value);
             setInsExpr(node, Blt_inst);
             return node;
         }
@@ -1812,6 +1827,8 @@ operand64 "Operando 64 Bits"
         {
             const node = createNode('SOURCE2', 'SRC2');
             addChild(node, i);
+            // FASE 3
+            setInsExpr(node, getInsExpr(i));
             return node;
         }
 
@@ -1831,6 +1848,8 @@ operand32 "Operando 32 Bits"
         {
             const node = createNode('SOURCE2', 'SRC2');
             addChild(node, i);
+            // FASE 3
+            setInsExpr(node, getInsExpr(i));
             return node;
         }
 

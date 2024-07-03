@@ -9,9 +9,51 @@ class Singleton {
             stackMemory: this.initializeMemory(64), // initialize 64 bytes of stack memory
             instructionMemory: this.initializeMemory(64), // initialize 64 bytes of instruction memory
         };
+        this.label = {};
+        this.existsJump = false;
+        // Flags
+        this.ZF = false; // Zero Flag
+        this.NF = false; // Negative Flag
+        this.CF = false; // Carry Flag
+        this.VF = false; // Overflow Flag
         Singleton.instance = this;
         this.updateDisplay();
         return this;
+    }
+
+    setResetFlags() {
+        this.ZF = false;
+        this.NF = false;
+        this.CF = false;
+        this.VF = false;
+    }
+
+    setFlags(ZF, NF, CF, VF) {
+        this.ZF = ZF;
+        this.NF = NF;
+        this.CF = CF;
+        this.VF = VF;
+    }
+
+    getFlags() {
+        return {
+            ZF: this.ZF,
+            NF: this.NF,
+            CF: this.CF,
+            VF: this.VF,
+        };
+    }
+
+    resetSingleton() {
+        this.data = {
+            registers: this.initializeRegisters(),
+            dataMemory: this.initializeMemory(64), // initialize 64 bytes of data memory
+            stackMemory: this.initializeMemory(64), // initialize 64 bytes of stack memory
+            instructionMemory: this.initializeMemory(64), // initialize 64 bytes of instruction memory
+        };
+        this.label = {};
+        this.updateDisplay();
+        this.existsJump = false;
     }
 
     static getInstance() {
@@ -22,10 +64,15 @@ class Singleton {
     }
 
     initializeRegisters() {
-        return {
-            x0: 0, x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0, x7: 0, x8: 0, x9: 0, x10: 0, x11: 0, x12: 0,
-            sp: 24, lr: 234, pc: 0
-        };
+        let registers = {};
+        for (let i = 0; i < 31; i++) {
+            registers[`x${i}`] = 0;
+            registers[`w${i}`] = 0;
+        }
+        registers["sp"] = 24;
+        registers["lr"] = 234;
+        registers["pc"] = 0;
+        return registers;
     }
 
     initializeMemory(size) {
@@ -39,13 +86,33 @@ class Singleton {
     setData(section, key, value) {
         if (section in this.data) {
             this.data[section][key] = value;
-            console.log(`Setting ${section}.${key} to ${value}`);
             this.updateDisplay();
         }
     }
 
     getData(section, key) {
         return this.data[section][key];
+    }
+
+    setLabel(label, Object) {
+        if (!this.label.hasOwnProperty(label)) {
+            this.label[label] = Object;
+            console.log(`Label ${label} set successfully.`);
+        } else {
+            console.log(`Label ${label} already exists.`);
+        }
+    }
+
+    setJump(bool) {
+        this.existsJump = bool
+    }
+
+    getJump() {
+        return this.existsJump;
+    }
+
+    getLabel(label) {
+        return this.label[label];
     }
 
     updateDisplay() {

@@ -12,16 +12,23 @@ class Beq extends Instruction{
     }
 
     execute(env, gen) {
-        console.log('Executing BEQ');
-        console.log('destination', this.destination);
-        // Implementar lógica de instrucción mov básicamente.
-        // 1. Obtener el valor de la variable op1
-            // let _d = destion?.execute(env);
-        // 2. Obtener el valor de la variable op2
-            // let _s = source?.execute(env);
-            //let retornoSource = this.source?._InsExpr?.execute('-');
-        // 3.1. Realizar la operación de asignación
-            // _d = _s;
+        console.log('Executing BEQ {', this.destination, '}');
+        
+        // 1. lógica
+        const memoryManager = Singleton.getInstance();
+        const flags = memoryManager.getFlags();
+        const label = memoryManager.getLabel(this.destination);
+        console.log('label', label);
+        if (label) {
+            if (flags.ZF === true){
+                label._InsExpr.execute(env, gen);
+                // Termina de ejecutar salto de etiqueta.
+                // entonces se debe obviar el resto de instrucciones desde donde se llamo el salto.
+                memoryManager.setJump(true);
+            }
+        } else {
+            console.log('Label not found');
+        }
         
         // 3.2. Realizar la lógica de generación de Quadruples
         gen.addQuadruple('BEQ',  '-','-', '-', '-', '-',this.destination.value);
